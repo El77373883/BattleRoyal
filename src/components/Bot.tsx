@@ -22,13 +22,13 @@ export function Bot({ position }: { position: [number, number, number] }) {
   useFrame((state, delta) => {
     if (!group.current || isDead.current) return
     
-    // Mover hacia el jugador (posición ~0,0,0 para simplificar)
+    // IA: Ir hacia el jugador (0,0,0)
     const dir = new THREE.Vector3(0, 1, 0).sub(group.current.position).normalize()
-    group.current.position.add(dir.multiplyScalar(2 * delta))
+    group.current.position.add(dir.multiplyScalar(1.5 * delta))
 
-    // Daño por proximidad
+    // Daño al jugador si está cerca
     const dist = group.current.position.distanceTo(new THREE.Vector3(0, 1, 0))
-    if (dist < 2.5) setHp(Math.max(0, playerHp - delta * 8))
+    if (dist < 2.5) setHp(Math.max(0, playerHp - delta * 5))
   })
 
   const takeDamage = (amount: number) => {
@@ -43,11 +43,15 @@ export function Bot({ position }: { position: [number, number, number] }) {
 
   return (
     <group ref={group} position={position}>
-      <mesh castShadow>
+      {/* Enemigo Rojo con userData para recibir daño */}
+      <mesh 
+        castShadow 
+        position={[0, 1, 0]}
+        userData={{ takeDamage }} 
+      >
         <capsuleGeometry args={[0.35, 1.1, 4, 8]} />
-        <meshStandardMaterial color="#457b9d" />
+        <meshStandardMaterial color="#e63946" />
       </mesh>
-      <primitive object={{ userData: { takeDamage } }} visible={false} />
     </group>
   )
 }
