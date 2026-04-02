@@ -50,14 +50,14 @@ export function Player() {
     velocity.current.lerp(direction.current.multiplyScalar(speed), 0.15)
     group.current.position.add(velocity.current.clone().multiplyScalar(delta))
 
-    // Cámara sigue al jugador
+    // Cámara sigue al jugador (Tercera persona)
     const targetCam = new THREE.Vector3(
       group.current.position.x,
-      group.current.position.y + 3.5,
-      group.current.position.z + 7
+      group.current.position.y + 4.5,
+      group.current.position.z + 9
     )
     camera.position.lerp(targetCam, 0.08)
-    camera.lookAt(group.current.position.x, group.current.position.y + 1, group.current.position.z)
+    camera.lookAt(group.current.position.x, group.current.position.y + 1.5, group.current.position.z)
 
     // Zona
     const distToCenter = new THREE.Vector2(group.current.position.x, group.current.position.z).length()
@@ -79,10 +79,43 @@ export function Player() {
   })
 
   return (
-    <group ref={group} position={[0, 1, 0]}>
-      <mesh castShadow>
-        <capsuleGeometry args={[0.35, 1.1, 4, 8]} />
-        <meshStandardMaterial color="#e63946" />
+    <group ref={group} position={[0, 0, 0]}>
+      {/* --- MODELO DEL SOLDADO --- */}
+      
+      {/* Piernas (Pantalón oscuro) */}
+      <mesh position={[0, 0.5, 0]} castShadow>
+        <boxGeometry args={[0.5, 0.7, 0.3]} />
+        <meshStandardMaterial color="#2b2d42" />
+      </mesh>
+
+      {/* Torso (Chaleco verde) */}
+      <mesh position={[0, 1.2, 0]} castShadow>
+        <boxGeometry args={[0.6, 0.8, 0.35]} />
+        <meshStandardMaterial color="#3a5a40" />
+      </mesh>
+
+      {/* Mochila (Naranja) */}
+      <mesh position={[0, 1.2, -0.25]} castShadow>
+        <boxGeometry args={[0.4, 0.6, 0.2]} />
+        <meshStandardMaterial color="#e76f51" />
+      </mesh>
+
+      {/* Cabeza (Piel) */}
+      <mesh position={[0, 1.85, 0]} castShadow>
+        <boxGeometry args={[0.35, 0.35, 0.35]} />
+        <meshStandardMaterial color="#e9c46a" />
+      </mesh>
+
+      {/* Casco (Verde militar) */}
+      <mesh position={[0, 2.05, 0]} castShadow>
+        <boxGeometry args={[0.4, 0.2, 0.4]} />
+        <meshStandardMaterial color="#2a9d8f" />
+      </mesh>
+
+      {/* Arma (Negra) */}
+      <mesh position={[0.35, 1.2, 0.3]} castShadow>
+        <boxGeometry args={[0.1, 0.15, 0.7]} />
+        <meshStandardMaterial color="#111" />
       </mesh>
     </group>
   )
