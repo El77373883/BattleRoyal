@@ -3,6 +3,150 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useStore } from '../store'
 
+// --- MODELO DEL SOLDADO DE ÉLITE ---
+function Soldier() {
+  return (
+    <group>
+      {/* --- CABEZA Y CASCO --- */}
+      <group position={[0, 1.75, 0]}>
+        {/* Cuello */}
+        <mesh>
+          <cylinderGeometry args={[0.08, 0.1, 0.15, 12]} />
+          <meshStandardMaterial color="#d4a373" roughness={0.9} />
+        </mesh>
+        {/* Cabeza (Piel) */}
+        <mesh position={[0, 0.1, 0]}>
+          <sphereGeometry args={[0.14, 16, 16]} />
+          <meshStandardMaterial color="#d4a373" roughness={0.8} />
+        </mesh>
+        {/* Casco Táctico (Verde Militar) */}
+        <mesh position={[0, 0.15, 0]}>
+          <capsuleGeometry args={[0.16, 0.15, 4, 16]} />
+          <meshStandardMaterial color="#344e41" roughness={0.6} metalness={0.1} />
+        </mesh>
+        {/* Auriculares del Casco */}
+        <mesh position={[-0.18, 0.05, 0]}>
+          <boxGeometry args={[0.05, 0.08, 0.06]} />
+          <meshStandardMaterial color="#1a1a1a" />
+        </mesh>
+        <mesh position={[0.18, 0.05, 0]}>
+          <boxGeometry args={[0.05, 0.08, 0.06]} />
+          <meshStandardMaterial color="#1a1a1a" />
+        </mesh>
+      </group>
+
+      {/* --- CUERPO (CHALECO TÁCTICO) --- */}
+      <group position={[0, 1.3, 0]}>
+        {/* Torso Base */}
+        <mesh>
+          <cylinderGeometry args={[0.2, 0.25, 0.5, 8]} />
+          <meshStandardMaterial color="#344e41" roughness={0.9} />
+        </mesh>
+        {/* Chaleco (Pecho) */}
+        <mesh position={[0, 0.1, 0.12]}>
+          <boxGeometry args={[0.35, 0.3, 0.15]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.7} />
+        </mesh>
+        {/* Bolsillos del Chaleco */}
+        <mesh position={[-0.08, 0, 0.22]}>
+          <boxGeometry args={[0.08, 0.08, 0.05]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+        <mesh position={[0.08, 0, 0.22]}>
+          <boxGeometry args={[0.08, 0.08, 0.05]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+        {/* Mochila (Atrás) */}
+        <mesh position={[0, 0.05, -0.2]}>
+          <boxGeometry args={[0.3, 0.4, 0.15]} />
+          <meshStandardMaterial color="#6b4f36" roughness={0.9} />
+        </mesh>
+      </group>
+
+      {/* --- BRAZOS --- */}
+      {/* Brazo Izquierdo */}
+      <group position={[-0.3, 1.4, 0]}>
+        <mesh>
+          <capsuleGeometry args={[0.06, 0.5, 4, 8]} />
+          <meshStandardMaterial color="#344e41" roughness={0.9} />
+        </mesh>
+        <mesh position={[0, -0.35, 0]}>
+          <capsuleGeometry args={[0.05, 0.3, 4, 8]} />
+          <meshStandardMaterial color="#d4a373" /> {/* Mano */}
+        </mesh>
+      </group>
+      
+      {/* Brazo Derecho (Sostiene arma) */}
+      <group position={[0.3, 1.4, 0]}>
+        <mesh rotation={[0.5, 0, 0]}>
+          <capsuleGeometry args={[0.06, 0.5, 4, 8]} />
+          <meshStandardMaterial color="#344e41" roughness={0.9} />
+        </mesh>
+      </group>
+
+      {/* --- PIERNAS (PANTALONES Y BOTAS) --- */}
+      {/* Pierna Izquierda */}
+      <group position={[-0.12, 0.8, 0]}>
+        <mesh>
+          <capsuleGeometry args={[0.08, 0.5, 4, 8]} />
+          <meshStandardMaterial color="#2b2b2b" roughness={0.95} /> {/* Pantalón */}
+        </mesh>
+        {/* Rodillera */}
+        <mesh position={[0, 0.15, 0.08]}>
+          <boxGeometry args={[0.1, 0.1, 0.05]} />
+          <meshStandardMaterial color="#111" />
+        </mesh>
+        {/* Bota */}
+        <mesh position={[0, -0.4, 0]}>
+          <boxGeometry args={[0.12, 0.2, 0.25]} />
+          <meshStandardMaterial color="#1a1a1a" />
+        </mesh>
+      </group>
+
+      {/* Pierna Derecha */}
+      <group position={[0.12, 0.8, 0]}>
+        <mesh>
+          <capsuleGeometry args={[0.08, 0.5, 4, 8]} />
+          <meshStandardMaterial color="#2b2b2b" roughness={0.95} />
+        </mesh>
+        <mesh position={[0, 0.15, 0.08]}>
+          <boxGeometry args={[0.1, 0.1, 0.05]} />
+          <meshStandardMaterial color="#111" />
+        </mesh>
+        <mesh position={[0, -0.4, 0]}>
+          <boxGeometry args={[0.12, 0.2, 0.25]} />
+          <meshStandardMaterial color="#1a1a1a" />
+        </mesh>
+      </group>
+
+      {/* --- ARMA (AK-47 TÁCTICA) --- */}
+      <group position={[0.35, 1.1, 0.3]} rotation={[0, 0.1, 0]}>
+        {/* Cuerpo Principal */}
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[0.06, 0.1, 0.5]} />
+          <meshStandardMaterial color="#222" metalness={0.8} roughness={0.2} />
+        </mesh>
+        {/* Cañón */}
+        <mesh position={[0, 0.02, 0.4]}>
+          <cylinderGeometry args={[0.02, 0.02, 0.4, 8]} />
+          <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
+        </mesh>
+        {/* Cargador (Curvo) */}
+        <mesh position={[0, -0.15, 0.1]}>
+          <boxGeometry args={[0.05, 0.2, 0.06]} />
+          <meshStandardMaterial color="#b5651d" roughness={0.5} /> {/* Color Bakelita/Madera */}
+        </mesh>
+        {/* Culata (Madera/Plástico) */}
+        <mesh position={[0, 0, -0.3]}>
+          <boxGeometry args={[0.05, 0.08, 0.3]} />
+          <meshStandardMaterial color="#5c4033" />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
+// --- COMPONENTE PRINCIPAL ---
 export function Player() {
   const { camera } = useThree()
   const group = useRef<THREE.Group>(null!)
@@ -13,7 +157,6 @@ export function Player() {
   const [shooting, setShooting] = useState(false)
   const lastShot = useRef(0)
 
-  // Controles táctiles
   useEffect(() => {
     const handleTouchMove = (e: TouchEvent) => {
       const t = e.touches[0]
@@ -42,7 +185,6 @@ export function Player() {
     }
   }, [])
 
-  // Lógica del juego (movimiento, cámara, disparo)
   useFrame((_, delta) => {
     if (!group.current) return
 
@@ -51,27 +193,23 @@ export function Player() {
     velocity.current.lerp(direction.current.multiplyScalar(speed), 0.2)
     group.current.position.add(velocity.current.clone().multiplyScalar(delta))
 
-    // Rotación suave
     if (velocity.current.length() > 0.5) {
       const angle = Math.atan2(velocity.current.x, velocity.current.z)
       group.current.rotation.y = angle
     }
 
-    // Cámara en 3ra persona
     const targetCam = new THREE.Vector3(
       group.current.position.x,
-      group.current.position.y + 4,
-      group.current.position.z + 8
+      group.current.position.y + 5,
+      group.current.position.z + 10
     )
     camera.position.lerp(targetCam, 0.1)
     camera.lookAt(group.current.position.x, group.current.position.y + 1.5, group.current.position.z)
 
-    // Zona de daño
     const distToCenter = new THREE.Vector2(group.current.position.x, group.current.position.z).length()
     if (distToCenter > zoneRadius) setHp(Math.max(0, hp - delta * 10))
     updateZone(delta)
 
-    // Disparo
     if (shooting && ammo > 0 && Date.now() - lastShot.current > 150) {
       lastShot.current = Date.now()
       setAmmo(ammo - 1)
@@ -85,81 +223,5 @@ export function Player() {
     }
   })
 
-  return (
-    <group ref={group} position={[0, 0, 0]}>
-      {/* --- NUEVO MODELO REALISTA (LOW POLY) --- */}
-      
-      {/* Cabeza (Esfera) */}
-      <mesh position={[0, 1.75, 0]} castShadow>
-        <sphereGeometry args={[0.18, 16, 16]} />
-        <meshStandardMaterial color="#f1c27d" roughness={0.8} /> {/* Piel */}
-      </mesh>
-
-      {/* Casco */}
-      <mesh position={[0, 1.85, 0]} castShadow>
-        <sphereGeometry args={[0.22, 16, 16]} />
-        <meshStandardMaterial color="#2d3436" roughness={0.5} /> {/* Gris oscuro */}
-      </mesh>
-
-      {/* Cuerpo (Torso) */}
-      <mesh position={[0, 1.2, 0]} castShadow>
-        <capsuleGeometry args={[0.28, 0.5, 4, 8]} />
-        <meshStandardMaterial color="#2f3e46" roughness={0.9} /> {/* Uniforme Táctico */}
-      </mesh>
-
-      {/* Mochila */}
-      <mesh position={[0, 1.25, -0.3]} castShadow>
-        <boxGeometry args={[0.4, 0.5, 0.2]} />
-        <meshStandardMaterial color="#8d6e63" /> {/* Marrón */}
-      </mesh>
-
-      {/* Pierna Izquierda */}
-      <mesh position={[-0.15, 0.5, 0]} castShadow>
-        <capsuleGeometry args={[0.1, 0.6, 4, 8]} />
-        <meshStandardMaterial color="#1e272e" /> {/* Pantalón Oscuro */}
-      </mesh>
-
-      {/* Pierna Derecha */}
-      <mesh position={[0.15, 0.5, 0]} castShadow>
-        <capsuleGeometry args={[0.1, 0.6, 4, 8]} />
-        <meshStandardMaterial color="#1e272e" />
-      </mesh>
-
-      {/* Brazo Izquierdo */}
-      <mesh position={[-0.35, 1.2, 0]} castShadow>
-        <capsuleGeometry args={[0.08, 0.6, 4, 8]} />
-        <meshStandardMaterial color="#2f3e46" />
-      </mesh>
-
-      {/* Brazo Derecho (Sostiene el arma) */}
-      <mesh position={[0.35, 1.2, 0]} castShadow>
-        <capsuleGeometry args={[0.08, 0.6, 4, 8]} />
-        <meshStandardMaterial color="#2f3e46" />
-      </mesh>
-
-      {/* --- ARMA (Rifle de Asalto) --- */}
-      <group position={[0.45, 1.1, 0.2]} rotation={[0.1, 0, 0]}>
-        {/* Cañón */}
-        <mesh position={[0, 0, 0.3]} castShadow>
-          <boxGeometry args={[0.06, 0.06, 0.6]} />
-          <meshStandardMaterial color="#111" />
-        </mesh>
-        {/* Cuerpo del arma */}
-        <mesh position={[0, 0, -0.1]} castShadow>
-          <boxGeometry args={[0.1, 0.12, 0.4]} />
-          <meshStandardMaterial color="#333" />
-        </mesh>
-        {/* Culata */}
-        <mesh position={[0, 0, -0.35]} castShadow>
-          <boxGeometry args={[0.08, 0.1, 0.3]} />
-          <meshStandardMaterial color="#222" />
-        </mesh>
-        {/* Mango (Grip) */}
-        <mesh position={[0, -0.15, 0]} castShadow>
-          <boxGeometry args={[0.08, 0.25, 0.08]} />
-          <meshStandardMaterial color="#222" />
-        </mesh>
-      </group>
-    </group>
-  )
+  return <group ref={group} position={[0, 0, 0]}><Soldier /></group>
 }
