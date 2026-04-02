@@ -13,6 +13,7 @@ export function Player() {
   const [shooting, setShooting] = useState(false)
   const lastShot = useRef(0)
 
+  // Controles táctiles
   useEffect(() => {
     const handleTouchMove = (e: TouchEvent) => {
       const t = e.touches[0]
@@ -41,31 +42,31 @@ export function Player() {
     }
   }, [])
 
+  // Lógica del juego (movimiento, cámara, disparo)
   useFrame((_, delta) => {
     if (!group.current) return
 
-    // Movimiento
     const speed = 6
     direction.current.set(joystick.x, 0, joystick.y).normalize()
     velocity.current.lerp(direction.current.multiplyScalar(speed), 0.2)
     group.current.position.add(velocity.current.clone().multiplyScalar(delta))
 
-    // 🔄 ROTACIÓN: Gira hacia donde caminas
+    // Rotación suave
     if (velocity.current.length() > 0.5) {
       const angle = Math.atan2(velocity.current.x, velocity.current.z)
       group.current.rotation.y = angle
     }
 
-    // Cámara
+    // Cámara en 3ra persona
     const targetCam = new THREE.Vector3(
       group.current.position.x,
-      group.current.position.y + 5,
-      group.current.position.z + 10
+      group.current.position.y + 4,
+      group.current.position.z + 8
     )
     camera.position.lerp(targetCam, 0.1)
     camera.lookAt(group.current.position.x, group.current.position.y + 1.5, group.current.position.z)
 
-    // Zona
+    // Zona de daño
     const distToCenter = new THREE.Vector2(group.current.position.x, group.current.position.z).length()
     if (distToCenter > zoneRadius) setHp(Math.max(0, hp - delta * 10))
     updateZone(delta)
@@ -86,31 +87,79 @@ export function Player() {
 
   return (
     <group ref={group} position={[0, 0, 0]}>
-      {/* --- MODELO DEL SOLDADO --- */}
-      <mesh position={[0, 0.5, 0]} castShadow>
-        <boxGeometry args={[0.5, 0.7, 0.3]} />
-        <meshStandardMaterial color="#2b2d42" />
+      {/* --- NUEVO MODELO REALISTA (LOW POLY) --- */}
+      
+      {/* Cabeza (Esfera) */}
+      <mesh position={[0, 1.75, 0]} castShadow>
+        <sphereGeometry args={[0.18, 16, 16]} />
+        <meshStandardMaterial color="#f1c27d" roughness={0.8} /> {/* Piel */}
       </mesh>
-      <mesh position={[0, 1.2, 0]} castShadow>
-        <boxGeometry args={[0.6, 0.8, 0.35]} />
-        <meshStandardMaterial color="#3a5a40" />
-      </mesh>
-      <mesh position={[0, 1.2, -0.25]} castShadow>
-        <boxGeometry args={[0.4, 0.6, 0.2]} />
-        <meshStandardMaterial color="#e76f51" />
-      </mesh>
+
+      {/* Casco */}
       <mesh position={[0, 1.85, 0]} castShadow>
-        <boxGeometry args={[0.35, 0.35, 0.35]} />
-        <meshStandardMaterial color="#e9c46a" />
+        <sphereGeometry args={[0.22, 16, 16]} />
+        <meshStandardMaterial color="#2d3436" roughness={0.5} /> {/* Gris oscuro */}
       </mesh>
-      <mesh position={[0, 2.05, 0]} castShadow>
-        <boxGeometry args={[0.4, 0.2, 0.4]} />
-        <meshStandardMaterial color="#2a9d8f" />
+
+      {/* Cuerpo (Torso) */}
+      <mesh position={[0, 1.2, 0]} castShadow>
+        <capsuleGeometry args={[0.28, 0.5, 4, 8]} />
+        <meshStandardMaterial color="#2f3e46" roughness={0.9} /> {/* Uniforme Táctico */}
       </mesh>
-      <mesh position={[0.35, 1.2, 0.3]} castShadow>
-        <boxGeometry args={[0.1, 0.15, 0.7]} />
-        <meshStandardMaterial color="#111" />
+
+      {/* Mochila */}
+      <mesh position={[0, 1.25, -0.3]} castShadow>
+        <boxGeometry args={[0.4, 0.5, 0.2]} />
+        <meshStandardMaterial color="#8d6e63" /> {/* Marrón */}
       </mesh>
+
+      {/* Pierna Izquierda */}
+      <mesh position={[-0.15, 0.5, 0]} castShadow>
+        <capsuleGeometry args={[0.1, 0.6, 4, 8]} />
+        <meshStandardMaterial color="#1e272e" /> {/* Pantalón Oscuro */}
+      </mesh>
+
+      {/* Pierna Derecha */}
+      <mesh position={[0.15, 0.5, 0]} castShadow>
+        <capsuleGeometry args={[0.1, 0.6, 4, 8]} />
+        <meshStandardMaterial color="#1e272e" />
+      </mesh>
+
+      {/* Brazo Izquierdo */}
+      <mesh position={[-0.35, 1.2, 0]} castShadow>
+        <capsuleGeometry args={[0.08, 0.6, 4, 8]} />
+        <meshStandardMaterial color="#2f3e46" />
+      </mesh>
+
+      {/* Brazo Derecho (Sostiene el arma) */}
+      <mesh position={[0.35, 1.2, 0]} castShadow>
+        <capsuleGeometry args={[0.08, 0.6, 4, 8]} />
+        <meshStandardMaterial color="#2f3e46" />
+      </mesh>
+
+      {/* --- ARMA (Rifle de Asalto) --- */}
+      <group position={[0.45, 1.1, 0.2]} rotation={[0.1, 0, 0]}>
+        {/* Cañón */}
+        <mesh position={[0, 0, 0.3]} castShadow>
+          <boxGeometry args={[0.06, 0.06, 0.6]} />
+          <meshStandardMaterial color="#111" />
+        </mesh>
+        {/* Cuerpo del arma */}
+        <mesh position={[0, 0, -0.1]} castShadow>
+          <boxGeometry args={[0.1, 0.12, 0.4]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+        {/* Culata */}
+        <mesh position={[0, 0, -0.35]} castShadow>
+          <boxGeometry args={[0.08, 0.1, 0.3]} />
+          <meshStandardMaterial color="#222" />
+        </mesh>
+        {/* Mango (Grip) */}
+        <mesh position={[0, -0.15, 0]} castShadow>
+          <boxGeometry args={[0.08, 0.25, 0.08]} />
+          <meshStandardMaterial color="#222" />
+        </mesh>
+      </group>
     </group>
   )
 }
