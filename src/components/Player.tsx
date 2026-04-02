@@ -45,18 +45,24 @@ export function Player() {
     if (!group.current) return
 
     // Movimiento
-    const speed = 5
+    const speed = 6
     direction.current.set(joystick.x, 0, joystick.y).normalize()
-    velocity.current.lerp(direction.current.multiplyScalar(speed), 0.15)
+    velocity.current.lerp(direction.current.multiplyScalar(speed), 0.2)
     group.current.position.add(velocity.current.clone().multiplyScalar(delta))
 
-    // Cámara sigue al jugador (Tercera persona)
+    // 🔄 ROTACIÓN: Gira hacia donde caminas
+    if (velocity.current.length() > 0.5) {
+      const angle = Math.atan2(velocity.current.x, velocity.current.z)
+      group.current.rotation.y = angle
+    }
+
+    // Cámara
     const targetCam = new THREE.Vector3(
       group.current.position.x,
-      group.current.position.y + 4.5,
-      group.current.position.z + 9
+      group.current.position.y + 5,
+      group.current.position.z + 10
     )
-    camera.position.lerp(targetCam, 0.08)
+    camera.position.lerp(targetCam, 0.1)
     camera.lookAt(group.current.position.x, group.current.position.y + 1.5, group.current.position.z)
 
     // Zona
@@ -65,15 +71,15 @@ export function Player() {
     updateZone(delta)
 
     // Disparo
-    if (shooting && ammo > 0 && Date.now() - lastShot.current > 180) {
+    if (shooting && ammo > 0 && Date.now() - lastShot.current > 150) {
       lastShot.current = Date.now()
       setAmmo(ammo - 1)
       
-      const raycaster = new THREE.Raycaster(camera.position, new THREE.Vector3(0, -0.15, -1).applyQuaternion(camera.quaternion))
+      const raycaster = new THREE.Raycaster(camera.position, new THREE.Vector3(0, -0.2, -1).applyQuaternion(camera.quaternion))
       const intersects = raycaster.intersectObjects(window._bots || [], false)
       if (intersects.length > 0) {
         const bot = intersects[0].object as any
-        if (bot.userData?.takeDamage) bot.userData.takeDamage(34)
+        if (bot.userData?.takeDamage) bot.userData.takeDamage(25)
       }
     }
   })
@@ -81,38 +87,26 @@ export function Player() {
   return (
     <group ref={group} position={[0, 0, 0]}>
       {/* --- MODELO DEL SOLDADO --- */}
-      
-      {/* Piernas (Pantalón oscuro) */}
       <mesh position={[0, 0.5, 0]} castShadow>
         <boxGeometry args={[0.5, 0.7, 0.3]} />
         <meshStandardMaterial color="#2b2d42" />
       </mesh>
-
-      {/* Torso (Chaleco verde) */}
       <mesh position={[0, 1.2, 0]} castShadow>
         <boxGeometry args={[0.6, 0.8, 0.35]} />
         <meshStandardMaterial color="#3a5a40" />
       </mesh>
-
-      {/* Mochila (Naranja) */}
       <mesh position={[0, 1.2, -0.25]} castShadow>
         <boxGeometry args={[0.4, 0.6, 0.2]} />
         <meshStandardMaterial color="#e76f51" />
       </mesh>
-
-      {/* Cabeza (Piel) */}
       <mesh position={[0, 1.85, 0]} castShadow>
         <boxGeometry args={[0.35, 0.35, 0.35]} />
         <meshStandardMaterial color="#e9c46a" />
       </mesh>
-
-      {/* Casco (Verde militar) */}
       <mesh position={[0, 2.05, 0]} castShadow>
         <boxGeometry args={[0.4, 0.2, 0.4]} />
         <meshStandardMaterial color="#2a9d8f" />
       </mesh>
-
-      {/* Arma (Negra) */}
       <mesh position={[0.35, 1.2, 0.3]} castShadow>
         <boxGeometry args={[0.1, 0.15, 0.7]} />
         <meshStandardMaterial color="#111" />
